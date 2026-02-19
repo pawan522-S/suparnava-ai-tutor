@@ -17,7 +17,9 @@ const rateLim = createRateLimiter({ windowMs: 60_000, max: 10 });
 // AI client
 const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
 const aiClient = new OpenAI({
-    apiKey: provider === 'groq' ? process.env.GROQ_API_KEY : process.env.OPENAI_API_KEY,
+    apiKey: provider === 'groq'
+        ? (process.env.GROQ_API_KEY || 'groq-not-configured')
+        : (process.env.OPENAI_API_KEY || 'openai-not-configured'),
     baseURL: provider === 'groq' ? 'https://api.groq.com/openai/v1' : undefined,
 });
 const MODEL = provider === 'groq' ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';

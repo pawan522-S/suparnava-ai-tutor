@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Suparnava AI Tutor</string>
+    <string name="title_activity_main">Suparnava AI Tutor</string>
+    <string name="package_name">com.suparnava.tutor</string>
+    <string name="custom_url_scheme">com.suparnava.tutor</string>
+</resources>

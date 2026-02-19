@@ -10,13 +10,13 @@ const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
 
 // Groq client — OpenAI-compatible SDK with Groq base URL
 const groqClient = new OpenAI({
-    apiKey: process.env.GROQ_API_KEY || '',
+    apiKey: process.env.GROQ_API_KEY || 'groq-not-configured',
     baseURL: 'https://api.groq.com/openai/v1',
 });
 
-// OpenAI client (fallback / alternative)
+// OpenAI client (only used when AI_PROVIDER=openai)
 const openaiClient = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || '',
+    apiKey: process.env.OPENAI_API_KEY || 'openai-not-configured',
 });
 
 // Pick the right client and model

@@ -1,0 +1,27 @@
+{
+    "appId": "com.suparnava.tutor",
+    "appName": "Suparnava AI Tutor",
+    "webDir": "www",
+    "bundledWebRuntime": false,
+    "server": {
+        "url": "https://REPLACE_WITH_RAILWAY_URL",
+        "cleartext": false,
+        "allowNavigation": [
+            "*.railway.app",
+            "*.groq.com"
+        ]
+    },
+    "android": {
+        "allowMixedContent": false,
+        "captureInput": true,
+        "webContentsDebuggingEnabled": false
+    },
+    "plugins": {
+        "SplashScreen": {
+            "launchShowDuration": 2000,
+            "backgroundColor": "#0d0e1a",
+            "androidSplashResourceName": "splash",
+            "showSpinner": false
+        }
+    }
+}
