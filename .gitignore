@@ -1,0 +1,12 @@
+node_modules/
+.env
+user_data/
+temp/
+*.log
+
+# Capacitor Android build artifacts
+mobile/node_modules/
+mobile/android/.gradle/
+mobile/android/app/build/
+mobile/android/build/
+mobile/.cache/

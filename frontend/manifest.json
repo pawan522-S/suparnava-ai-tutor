@@ -1,0 +1,42 @@
+{
+    "name": "Suparnava AI English Tutor",
+    "short_name": "Suparnava",
+    "description": "AI-powered spoken English coaching with real-time grammar feedback",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0d0e1a",
+    "theme_color": "#7c6ef5",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "shortcuts": [
+        {
+            "name": "Start Voice Chat",
+            "short_name": "Chat",
+            "description": "Jump straight into voice practice",
+            "url": "/?screen=chat",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}

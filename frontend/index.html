@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="Suparnava AI English Tutor — Learn spoken English through voice conversation, grammar feedback, and personalized lessons." />
+  <meta name="theme-color" content="#0d0e1a" />
+  <title>Suparnava AI English Tutor</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    /* Language button selected state */
+    .lang-btn {
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      border: 2px solid transparent !important;
+      cursor: pointer;
+    }
+
+    .lang-btn.selected {
+      border-color: var(--c-primary) !important;
+      background: rgba(124, 110, 245, 0.18) !important;
+      color: var(--c-primary-2) !important;
+      box-shadow: 0 0 0 3px rgba(124, 110, 245, 0.25);
+      transform: scale(1.04);
+    }
+
+    /* Level card selected state */
+    .level-card.selected {
+      border-color: var(--c-primary) !important;
+      background: rgba(124, 110, 245, 0.12) !important;
+      box-shadow: 0 0 0 3px rgba(124, 110, 245, 0.25);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Suparnava AI English Tutor" />
+  <meta property="og:description" content="Master spoken English with AI-powered coaching." />
+  <meta property="og:type" content="website" />
+</head>
+
+<body>
+
+  <!-- ─────────────────────────────────────────────────────────
+     TOAST CONTAINER
+──────────────────────────────────────────────────────────── -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ─────────────────────────────────────────────────────────
+     APP SHELL
+──────────────────────────────────────────────────────────── -->
+  <div id="app">
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 1: ONBOARDING / AUTH
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-onboarding" class="screen active" role="main" aria-label="Get Started">
+      <div style="flex:1;overflow-y:auto;padding:var(--sp-6) var(--sp-5)">
+
+        <!-- Slide dots -->
+        <div class="flex justify-center gap-2 mb-6">
+          <div class="slide-dot active" id="dot-0"></div>
+          <div class="slide-dot" id="dot-1"></div>
+          <div class="slide-dot" id="dot-2"></div>
+        </div>
+
+        <!-- Step 1: Account -->
+        <div id="ob-step-1" class="ob-step active">
+          <div class="text-center mb-6">
+            <div style="font-size:4rem;margin-bottom:16px">🎓</div>
+            <h1 class="grad-text" style="font-size:2rem;margin-bottom:8px">Suparnava</h1>
+            <p style="color:var(--t-muted);font-size:1.05rem">Your AI Spoken English Coach</p>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--sp-4)">
+            <div class="input-group">
+              <label class="input-label" for="ob-name">Your Name</label>
+              <input id="ob-name" class="input-field" type="text" placeholder="e.g. Rahul Sharma" autocomplete="name" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="ob-email">Email Address</label>
+              <input id="ob-email" class="input-field" type="email" placeholder="you@email.com" autocomplete="email" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="ob-password">Create Password</label>
+              <input id="ob-password" class="input-field" type="password" placeholder="Min. 6 characters"
+                autocomplete="new-password" />
+            </div>
+            <button class="btn btn-primary btn-full mt-2" onclick="nextOnboardStep(2)">Continue →</button>
+            <p class="text-center text-sm text-muted">Already have an account?
+              <button class="btn-ghost btn" style="font-size:0.85rem;padding:0" onclick="showScreen('login')">Sign
+                In</button>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2: Native Language -->
+        <div id="ob-step-2" class="ob-step" style="display:none">
+          <div class="text-center mb-6">
+            <div style="font-size:3rem;margin-bottom:16px">🌏</div>
+            <h2 class="grad-text">What's your native language?</h2>
+            <p class="text-muted mt-2">We'll personalise your learning experience</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Hindi" onclick="selectLang(this)">🇮🇳
+              Hindi</button>
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Bengali"
+              onclick="selectLang(this)">Bengali</button>
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Tamil"
+              onclick="selectLang(this)">Tamil</button>
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Telugu"
+              onclick="selectLang(this)">Telugu</button>
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Marathi"
+              onclick="selectLang(this)">Marathi</button>
+            <button class="lang-btn glass-card p5 btn-secondary" data-lang="Other" onclick="selectLang(this)">🌐
+              Other</button>
+          </div>
+          <button class="btn btn-primary btn-full mt-6" onclick="goToStep3()">Continue →</button>
+        </div>
+
+        <!-- Step 3: Level -->
+        <div id="ob-step-3" class="ob-step" style="display:none">
+          <div class="text-center mb-6">
+            <div style="font-size:3rem;margin-bottom:16px">📊</div>
+            <h2 class="grad-text">What's your English level?</h2>
+            <p class="text-muted mt-2">Be honest — we adapt as you improve!</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="level-card glass-card" data-level="beginner" onclick="selectLevel(this)">
+              <div class="flex items-center gap-4">
+                <span style="font-size:2rem">🌱</span>
+                <div>
+                  <h3 style="color:var(--c-success)">Beginner</h3>
+                  <p class="text-sm text-muted">Basic phrases, greetings, daily routines</p>
+                </div>
+              </div>
+            </div>
+            <div class="level-card glass-card" data-level="intermediate" onclick="selectLevel(this)">
+              <div class="flex items-center gap-4">
+                <span style="font-size:2rem">⚡</span>
+                <div>
+                  <h3 style="color:var(--c-warning)">Intermediate</h3>
+                  <p class="text-sm text-muted">Conversations, idioms, expressing opinions</p>
+                </div>
+              </div>
+            </div>
+            <div class="level-card glass-card" data-level="advanced" onclick="selectLevel(this)">
+              <div class="flex items-center gap-4">
+                <span style="font-size:2rem">🚀</span>
+                <div>
+                  <h3 style="color:var(--c-primary-2)">Advanced</h3>
+                  <p class="text-sm text-muted">Business English, debates, nuanced fluency</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button id="ob-finish-btn" class="btn btn-primary btn-full mt-6" onclick="goToFinish()">🎓 Start
+            Learning!</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN: LOGIN
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-login" class="screen" aria-label="Sign In">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:var(--sp-6) var(--sp-5)">
+        <div class="text-center mb-6">
+          <div style="font-size:3.5rem;margin-bottom:12px">👋</div>
+          <h1 class="grad-text">Welcome Back</h1>
+          <p class="text-muted mt-2">Sign in to continue your English journey</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-4)">
+          <div class="input-group">
+            <label class="input-label" for="login-email">Email</label>
+            <input id="login-email" class="input-field" type="email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="login-password">Password</label>
+            <input id="login-password" class="input-field" type="password" placeholder="Your password"
+              autocomplete="current-password" />
+          </div>
+          <button id="login-btn" class="btn btn-primary btn-full mt-2" onclick="doLogin()">Sign In</button>
+          <p class="text-center text-sm text-muted">New here?
+            <button class="btn-ghost btn" style="font-size:0.85rem;padding:0"
+              onclick="showScreen('onboarding');nextOnboardStep(1)">Create Account</button>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 2: HOME DASHBOARD
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-home" class="screen" role="main" aria-label="Home">
+      <div style="overflow-y:auto;flex:1">
+
+        <!-- Header -->
+        <div
+          style="padding:var(--sp-6) var(--sp-5) var(--sp-4);background:linear-gradient(180deg,rgba(13,14,26,1) 0%,transparent 100%)">
+          <div class="flex items-center justify-between">
+            <div>
+              <p id="home-greeting" style="color:var(--t-muted);font-size:0.85rem;margin-bottom:2px">Good morning! 👋
+              </p>
+              <h1 style="font-size:1.5rem" class="grad-text">Suparnava Tutor</h1>
+            </div>
+            <button class="glass-card" onclick="showScreen('settings');loadSettingsScreen()"
+              style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;border:none"
+              aria-label="Settings">⚙️</button>
+          </div>
+
+          <!-- XP / Level bar -->
+          <div class="glass-card" style="padding:var(--sp-4);margin-top:var(--sp-4)">
+            <div class="flex items-center justify-between mb-2">
+              <span class="badge-chip badge-primary" id="home-level">Beginner</span>
+              <span style="font-size:0.85rem;color:var(--c-primary-2);font-weight:600"><span id="home-xp">0</span>
+                XP</span>
+            </div>
+            <div class="xp-bar">
+              <div class="xp-bar-fill" id="home-xp-bar" style="width:0%"></div>
+            </div>
+            <p class="text-xs text-muted mt-2" id="home-xp-pct">0% to next level</p>
+          </div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="px" style="padding-top:0">
+          <div class="stat-grid mb-4">
+            <div class="stat-card glass-card">
+              <div class="stat-value streak-flame" id="home-streak">0</div>
+              <div class="stat-label">🔥 Day Streak</div>
+            </div>
+            <div class="stat-card glass-card" onclick="showScreen('chat');initChatScreen()" style="cursor:pointer">
+              <div class="stat-value" style="font-size:2rem">🎤</div>
+              <div class="stat-label">Practice Now</div>
+            </div>
+          </div>
+
+          <!-- Daily Challenge Card -->
+          <div class="glass-card mb-4" style="padding:var(--sp-5);border:1px solid rgba(251,191,36,0.25)">
+            <div class="flex items-center gap-2 mb-3">
+              <span style="font-size:1.3rem">🏆</span>
+              <h3 style="color:var(--c-warning)">Daily Challenge</h3>
+              <span class="badge-chip badge-warning" style="margin-left:auto">+75 XP</span>
+            </div>
+            <p class="text-sm" id="challenge-prompt" style="color:var(--t-body);line-height:1.6">Loading today's
+              challenge...</p>
+
+            <div id="challenge-result" class="hidden mt-3">
+              <div class="correction-card">
+                <p class="text-sm font-semibold mb-1" style="color:var(--c-success)">AI Feedback:</p>
+                <p class="text-sm" id="challenge-feedback"></p>
+              </div>
+            </div>
+
+            <textarea id="challenge-response" class="input-field mt-3"
+              placeholder="Type your response here... or tap the mic on the Chat screen" rows="3"
+              style="resize:none"></textarea>
+            <button id="challenge-submit-btn" class="btn btn-primary btn-full mt-3"
+              onclick="submitDailyChallenge()">Submit Response 🚀</button>
+          </div>
+
+          <!-- Quick access -->
+          <h3 class="mb-3">Quick Access</h3>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:var(--sp-5)">
+            <button class="glass-card" onclick="showScreen('chat');initChatScreen()"
+              style="padding:var(--sp-4);border:none;cursor:pointer;text-align:left">
+              <div style="font-size:1.8rem;margin-bottom:8px">🎤</div>
+              <p class="font-semibold" style="color:var(--t-heading);font-size:0.9rem">Voice Chat</p>
+              <p class="text-xs text-muted">Talk with AI tutor</p>
+            </button>
+            <button class="glass-card" onclick="showScreen('lessons');loadLessonsScreen()"
+              style="padding:var(--sp-4);border:none;cursor:pointer;text-align:left">
+              <div style="font-size:1.8rem;margin-bottom:8px">📚</div>
+              <p class="font-semibold" style="color:var(--t-heading);font-size:0.9rem">Lessons</p>
+              <p class="text-xs text-muted">Structured learning</p>
+            </button>
+            <button class="glass-card" onclick="showScreen('progress');loadProgressScreen()"
+              style="padding:var(--sp-4);border:none;cursor:pointer;text-align:left">
+              <div style="font-size:1.8rem;margin-bottom:8px">📊</div>
+              <p class="font-semibold" style="color:var(--t-heading);font-size:0.9rem">Progress</p>
+              <p class="text-xs text-muted">Analyse your growth</p>
+            </button>
+            <button class="glass-card"
+              onclick="showScreen('chat');initChatScreen();setTimeout(()=>{document.getElementById('scenario-select').value='interview'},500)"
+              style="padding:var(--sp-4);border:none;cursor:pointer;text-align:left">
+              <div style="font-size:1.8rem;margin-bottom:8px">💼</div>
+              <p class="font-semibold" style="color:var(--t-heading);font-size:0.9rem">Scenarios</p>
+              <p class="text-xs text-muted">Role-play situations</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 3: VOICE CHAT
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-chat" class="screen" aria-label="Voice Chat">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('home')" aria-label="Back">←</button>
+        <div>
+          <div class="screen-title">AI Tutor Chat</div>
+          <p class="text-xs text-muted">Real-time grammar &amp; feedback</p>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-ghost btn-sm" onclick="clearChatHistory()" aria-label="Clear chat">🗑</button>
+        </div>
+      </div>
+
+      <!-- Scenario picker -->
+      <div class="px" style="padding-top:var(--sp-3);padding-bottom:var(--sp-2)">
+        <select id="scenario-select" class="input-field" style="font-size:0.85rem"
+          aria-label="Select practice scenario">
+          <option value="">💬 Free Conversation</option>
+        </select>
+      </div>
+
+      <!-- Chat messages -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto px"
+        style="display:flex;flex-direction:column;gap:12px;padding-top:12px;padding-bottom:12px">
+        <div class="flex justify-start">
+          <div class="chat-bubble bubble-ai">
+            👋 Hello! I'm Suparnava, your AI English coach. Press the mic button below and speak to me in English. I'll
+            correct your grammar, score your pronunciation, and help you improve! What would you like to talk about
+            today?
+          </div>
+        </div>
+      </div>
+
+      <!-- Interim transcript -->
+      <div class="px" style="min-height:28px;padding-bottom:var(--sp-2)">
+        <p id="interim-text" class="text-sm text-muted" style="font-style:italic"></p>
+      </div>
+
+      <!-- Waveform -->
+      <div class="px" style="margin-bottom:var(--sp-3)">
+        <canvas id="waveform-canvas" width="400" height="56"
+          style="width:100%;height:56px;border-radius:12px;background:rgba(255,255,255,0.03)"></canvas>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-4 px" style="padding-bottom:var(--sp-4)">
+        <input id="text-input" class="input-field flex-1" type="text" placeholder="Or type here and press Enter..."
+          aria-label="Type your message" onkeydown="if(event.key==='Enter')sendTextInput()" />
+        <button id="mic-btn" class="mic-btn" onclick="toggleRecording()" aria-label="Start voice recording"
+          title="Press to speak">🎤</button>
+      </div>
+
+      <!-- Grammar Panel -->
+      <div id="grammar-panel" class="hidden px" style="padding-bottom:var(--sp-4)">
+        <div class="glass-card" style="padding:var(--sp-4)">
+          <div class="flex items-center justify-between mb-3">
+            <h4 style="color:var(--t-heading)">📝 Grammar Analysis</h4>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-muted">Grammar</span>
+              <span id="grammar-score" class="font-bold"
+                style="color:var(--c-primary-2);font-family:var(--font-display);font-size:1.1rem">—</span>
+              <span class="text-xs text-muted">· Pronunciation</span>
+              <span id="pron-score" class="font-bold"
+                style="color:var(--c-accent);font-family:var(--font-display);font-size:1.1rem">—</span>
+            </div>
+          </div>
+          <div class="correction-card mb-3">
+            <p class="text-xs text-muted mb-1">Corrected sentence:</p>
+            <p id="grammar-corrected" class="text-sm" style="color:var(--t-heading)"></p>
+          </div>
+          <div id="grammar-errors"></div>
+          <button class="btn btn-ghost btn-sm"
+            onclick="document.getElementById('grammar-panel').classList.add('hidden')"
+            style="margin-top:8px;width:100%">Close ✕</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 4: LESSONS
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-lessons" class="screen" aria-label="Lessons">
+      <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('home')" aria-label="Back">←</button>
+        <div>
+          <div class="screen-title">📚 Lessons</div>
+          <p class="text-xs text-muted" id="lesson-progress-text">Loading...</p>
+        </div>
+      </div>
+
+      <!-- Lesson progress bar -->
+      <div class="px" style="padding-top:var(--sp-3)">
+        <div class="xp-bar">
+          <div class="xp-bar-fill" id="lesson-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Lesson grid -->
+      <div id="lessons-grid" class="px"
+        style="flex:1;overflow-y:auto;padding-top:var(--sp-4);display:flex;flex-direction:column;gap:12px">
+        <p class="text-center text-muted" style="padding:24px">Loading lessons...</p>
+      </div>
+
+      <!-- Lesson Modal (hidden) -->
+      <div id="lesson-modal" class="hidden"
+        style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end">
+        <div class="glass-card"
+          style="width:100%;max-width:var(--max-w);margin:0 auto;padding:var(--sp-6);max-height:80dvh;overflow-y:auto;border-bottom-left-radius:0;border-bottom-right-radius:0;border-top-left-radius:var(--r-2xl);border-top-right-radius:var(--r-2xl)">
+          <div class="flex items-center justify-between mb-4">
+            <h3 id="lesson-modal-title" style="color:var(--t-heading)">Lesson</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeLessonModal()">✕</button>
+          </div>
+          <p id="lesson-modal-obj" class="text-sm text-muted mb-4"></p>
+          <div id="lesson-exercises"></div>
+          <div id="lesson-modal-id" data-lesson-id="" style="display:none"></div>
+          <div class="flex gap-3 mt-4">
+            <button class="btn btn-secondary flex-1" onclick="closeLessonModal()">Cancel</button>
+            <button id="lesson-complete-btn" class="btn btn-primary flex-1" onclick="completeCurrentLesson()">✓ Mark
+              Complete</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 5: PROGRESS
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-progress" class="screen" aria-label="Progress">
+      <div style="overflow-y:auto;flex:1">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('home')" aria-label="Back">←</button>
+          <div class="screen-title">📊 My Progress</div>
+        </div>
+
+        <div id="progress-loading" class="text-center" style="padding:32px">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <p class="text-muted text-sm">Loading your data...</p>
+        </div>
+
+        <div class="px" style="padding-top:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-4)">
+
+          <!-- Stats grid -->
+          <div class="stat-grid">
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-accuracy">—</div>
+              <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-streak">—</div>
+              <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-messages">—</div>
+              <div class="stat-label">Messages</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-xp">—</div>
+              <div class="stat-label">Total XP</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-level">—</div>
+              <div class="stat-label">Level</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-lessons">—</div>
+              <div class="stat-label">Lessons</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-badges">—</div>
+              <div class="stat-label">Badges</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-value" id="prog-scenarios">—</div>
+              <div class="stat-label">Scenarios</div>
+            </div>
+          </div>
+
+          <!-- XP bar -->
+          <div class="glass-card" style="padding:var(--sp-4)">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold" style="color:var(--t-heading)">XP Progress</span>
+              <span class="text-xs text-muted" id="prog-xp-pct"></span>
+            </div>
+            <div class="xp-bar">
+              <div class="xp-bar-fill" id="prog-xp-bar" style="width:0%"></div>
+            </div>
+          </div>
+
+          <!-- Personalised tip -->
+          <div class="glass-card" style="padding:var(--sp-4);border:1px solid rgba(124,110,245,0.3)">
+            <div class="flex items-center gap-2 mb-2">
+              <span>💡</span>
+              <h4 style="color:var(--c-primary-2)">Focus Tip</h4>
+            </div>
+            <p class="text-sm" id="focus-tip" style="color:var(--t-body)">Keep practising to unlock personalised tips!
+            </p>
+          </div>
+
+          <!-- Accuracy Chart -->
+          <div class="glass-card" style="padding:var(--sp-4)">
+            <h4 style="color:var(--t-heading);margin-bottom:12px">Accuracy Trend</h4>
+            <canvas id="chart-accuracy" style="width:100%;height:130px;display:block" role="img"
+              aria-label="Accuracy trend chart"></canvas>
+          </div>
+
+          <!-- Weekly Activity -->
+          <div class="glass-card" style="padding:var(--sp-4)">
+            <h4 style="color:var(--t-heading);margin-bottom:12px">This Week's Activity</h4>
+            <canvas id="chart-weekly" style="width:100%;height:100px;display:block" role="img"
+              aria-label="Weekly activity bar chart"></canvas>
+          </div>
+
+          <!-- Error Breakdown -->
+          <div class="glass-card" style="padding:var(--sp-4)">
+            <h4 style="color:var(--t-heading);margin-bottom:12px">Common Error Areas</h4>
+            <canvas id="chart-errors" style="width:100%;height:200px;display:block" role="img"
+              aria-label="Error types donut chart"></canvas>
+          </div>
+
+          <!-- Badges -->
+          <div class="glass-card" style="padding:var(--sp-4)">
+            <h4 style="color:var(--t-heading);margin-bottom:12px">🏅 Earned Badges</h4>
+            <div id="badges-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            </div>
+          </div>
+
+          <div style="height:var(--sp-4)"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       SCREEN 6: SETTINGS
+  ═══════════════════════════════════════════════════════ -->
+    <section id="screen-settings" class="screen" aria-label="Settings">
+      <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('home')" aria-label="Back">←</button>
+        <div class="screen-title">⚙️ Settings</div>
+      </div>
+
+      <div class="px"
+        style="overflow-y:auto;flex:1;padding-top:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-4)">
+
+        <!-- Profile -->
+        <div class="glass-card" style="padding:var(--sp-5)">
+          <h3 style="color:var(--t-heading);margin-bottom:var(--sp-4)">Profile</h3>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-3)">
+            <div class="input-group">
+              <label class="input-label" for="settings-name">Display Name</label>
+              <input id="settings-name" class="input-field" type="text" placeholder="Your name" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="settings-email">Email</label>
+              <input id="settings-email" class="input-field" type="email" disabled
+                style="opacity:0.5;cursor:not-allowed" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="settings-level">Level</label>
+              <select id="settings-level" class="input-field">
+                <option value="beginner">🌱 Beginner</option>
+                <option value="intermediate">⚡ Intermediate</option>
+                <option value="advanced">🚀 Advanced</option>
+              </select>
+            </div>
+            <button id="settings-save-btn" class="btn btn-primary btn-full" onclick="saveSettings()">Save
+              Changes</button>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="glass-card" style="padding:var(--sp-5)">
+          <h3 style="color:var(--t-heading);margin-bottom:var(--sp-3)">About</h3>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-2)">
+            <div class="flex justify-between">
+              <span class="text-sm text-muted">Version</span>
+              <span class="text-sm" style="color:var(--t-body)">2.0.0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-muted">AI Provider</span>
+              <span class="text-sm" style="color:var(--c-primary-2)">Groq / OpenAI</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-muted">Voice</span>
+              <span class="text-sm" style="color:var(--t-body)">Web Speech API</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <button class="btn btn-full" onclick="doLogout()"
+          style="background:rgba(248,113,113,0.12);color:var(--c-danger);border:1px solid rgba(248,113,113,0.3)">
+          Sign Out
+        </button>
+
+        <div style="height:var(--sp-4)"></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+       BOTTOM NAVIGATION
+  ═══════════════════════════════════════════════════════ -->
+    <nav id="bottom-nav" class="bottom-nav" style="display:none" role="navigation" aria-label="Main navigation">
+      <button class="nav-item active" data-screen="home" onclick="showScreen('home')" aria-label="Home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" data-screen="chat" onclick="showScreen('chat');initChatScreen()" aria-label="Chat">
+        <span class="nav-icon">🎤</span>
+        <span class="nav-label">Chat</span>
+      </button>
+      <button class="nav-item" data-screen="lessons" onclick="showScreen('lessons');loadLessonsScreen()"
+        aria-label="Lessons">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Lessons</span>
+      </button>
+      <button class="nav-item" data-screen="progress" onclick="showScreen('progress')" aria-label="Progress">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Progress</span>
+      </button>
+    </nav>
+
+  </div><!-- /#app -->
+
+  <!-- ─────────────────────────────────────────────────────────
+     SCRIPTS (order matters)
+──────────────────────────────────────────────────────────── -->
+  <script src="/js/api.js"></script>
+  <script src="/js/voiceChat.js"></script>
+  <script src="/js/analytics.js"></script>
+  <script src="/js/app.js"></script>
+
+  <!-- Inline helper scripts for onboarding UI interactions -->
+  <script>
+    // ── Onboarding helpers ──────────────────────────────────
+
+    function selectLang(btn) {
+      // Remove selected from all lang buttons
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
+      // Apply selected to clicked button
+      btn.classList.add('selected');
+    }
+
+    function selectLevel(card) {
+      document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    }
+
+    // Step 1 → Step 2 (validate account fields)
+    function nextOnboardStep(step) {
+      if (step === 2) {
+        const name = document.getElementById('ob-name')?.value.trim();
+        const email = document.getElementById('ob-email')?.value.trim();
+        const password = document.getElementById('ob-password')?.value;
+        if (!name || !email || !password) {
+          return showToast('Please fill in all fields.', 'error');
+        }
+        if (!email.includes('@')) {
+          return showToast('Please enter a valid email address.', 'error');
+        }
+        if (password.length < 6) {
+          return showToast('Password must be at least 6 characters.', 'error');
+        }
+      }
+      _goToStep(step);
+    }
+
+    // Step 2 → Step 3 (validate language selected)
+    function goToStep3() {
+      const selected = document.querySelector('.lang-btn.selected');
+      if (!selected) {
+        // Shake the grid to give visual feedback
+        const grid = document.querySelector('#ob-step-2 > div:nth-child(2)');
+        if (grid) {
+          grid.style.animation = 'none';
+          grid.offsetHeight; // reflow
+          grid.style.animation = 'shake 0.35s ease';
+        }
+        return showToast('Please select your native language first.', 'error');
+      }
+      _goToStep(3);
+    }
+
+    // Step 3 → Register (validate level selected)
+    function goToFinish() {
+      const selected = document.querySelector('.level-card.selected');
+      if (!selected) {
+        return showToast('Please select your English level first.', 'error');
+      }
+      completeOnboarding();
+    }
+
+    // Internal: switch visible step and update dots
+    function _goToStep(step) {
+      document.querySelectorAll('.ob-step').forEach(s => {
+        s.style.display = 'none';
+        s.classList.remove('active');
+      });
+      const el = document.getElementById('ob-step-' + step);
+      if (el) { el.style.display = 'block'; el.classList.add('active'); }
+      document.querySelectorAll('.slide-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === step - 1);
+      });
+    }
+  </script>
+
+  <style>
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-8px);
+      }
+
+      40% {
+        transform: translateX(8px);
+      }
+
+      60% {
+        transform: translateX(-6px);
+      }
+
+      80% {
+        transform: translateX(6px);
+      }
+    }
+  </style>
+</body>
+
+</html>
